@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dailit — 매일 읽는 IT 큐레이션</title>
+    <!-- Google Fonts for Premium Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            /* Smooth background color transition */
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Refined Premium Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+        }
+
+        .dark .glass {
+            background: rgba(18, 20, 25, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Nav specific glass to ensure it doesn't mask out contents */
+        .nav-glass {
+            background: rgba(245, 245, 247, 0.8);
+        }
+        .dark .nav-glass {
+            background: rgba(15, 17, 21, 0.8);
+        }
+
+        /* Abstract Amorphous Blob Logo */
+        .hip-blob {
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6, #10B981, #EC4899);
+            background-size: 300% 300%;
+            animation: blobMorph 8s ease-in-out infinite, gradientShift 6s ease infinite;
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            box-shadow: inset -5px -5px 15px rgba(255,255,255,0.4), inset 5px 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        @keyframes blobMorph {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-[#eff3f8] via-[#f8f9fb] to-[#e8ebf2] dark:from-[#13151a] dark:via-[#0F1115] dark:to-[#1a1c22] text-[#1D1D1F] dark:text-gray-100 font-sans antialiased min-h-screen bg-fixed">
+    <!-- Decorative Ambient Background -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute -top-[10%] -left-[10%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-br from-blue-300/30 to-purple-300/30 dark:from-blue-600/10 dark:to-purple-600/10 blur-[120px]"></div>
+        <div class="absolute top-[20%] -right-[10%] w-[50vw] h-[50vw] rounded-full bg-gradient-to-bl from-pink-200/30 to-orange-200/30 dark:from-pink-600/10 dark:to-orange-600/10 blur-[120px]"></div>
+        <div class="absolute -bottom-[20%] left-[20%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-tr from-emerald-200/30 to-teal-200/30 dark:from-emerald-600/10 dark:to-teal-600/10 blur-[120px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 glass nav-glass border-b border-gray-200 dark:border-white/10 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2.5 group">
+                <!-- Dailit Logo: Free-form Glowing Sparkle (no background box) -->
+                <div class="relative flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500 ease-out">
+                    <svg viewBox="0 0 24 24" width="34" height="34"
+                         style="filter: drop-shadow(0 0 5px rgba(167,139,250,0.85)) drop-shadow(0 0 14px rgba(99,102,241,0.4));"
+                         class="transition-all duration-500 group-hover:[filter:drop-shadow(0_0_8px_rgba(167,139,250,1))_drop-shadow(0_0_20px_rgba(99,102,241,0.6))]">
+                        <!-- 4-pointed sparkle with concave arms -->
+                        <path d="M12 1.5
+                                 C12.35 6.5 14 9.5 17 11.2
+                                 C20 12.5 22.5 12 22.5 12
+                                 C22.5 12 20 11.5 17 12.8
+                                 C14 14.5 12.35 17.5 12 22.5
+                                 C11.65 17.5 10 14.5 7 12.8
+                                 C4 11.5 1.5 12 1.5 12
+                                 C1.5 12 4 12.5 7 11.2
+                                 C10 9.5 11.65 6.5 12 1.5 Z"
+                              fill="url(#dailit-grad)"/>
+                        <defs>
+                            <radialGradient id="dailit-grad" cx="30%" cy="22%" r="72%" gradientUnits="objectBoundingBox">
+                                <stop offset="0%"   stop-color="#f5f3ff"/>
+                                <stop offset="30%"  stop-color="#c4b5fd"/>
+                                <stop offset="65%"  stop-color="#7c3aed"/>
+                                <stop offset="100%" stop-color="#3730a3"/>
+                            </radialGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <!-- Typographic Logo -->
+                <h1 class="text-xl font-black tracking-tight text-gray-900 dark:text-white transition-all duration-500 leading-none">
+                    Dail<span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-500 dark:from-violet-400 dark:to-indigo-400">it</span>
+                </h1>
+            </a>
+            
+            <div class="flex items-center">
+                <!-- Dark Mode Toggle Button -->
+                <button id="theme-toggle" class="p-2 rounded-full bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm border border-gray-200 dark:border-white/5 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50">
+                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="max-w-6xl mx-auto px-6 pt-24 pb-16 flex flex-col md:flex-row md:justify-between md:items-end gap-8 flex-wrap">
+        <div>
+            <h2 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-5 text-gray-900 dark:text-white leading-[1.1]">Better Experience,<br>Better Insights.</h2>
+            <p class="text-xl text-gray-500 dark:text-gray-400 font-medium tracking-tight">매일 머무르게 되는 당신만의 IT 큐레이션</p>
+        </div>
+        <div class="flex flex-col md:flex-row items-center gap-4 self-stretch md:self-auto w-full md:w-auto">
+            <!-- Category Chips -->
+            <div class="flex-grow w-full md:w-auto">
+                <div id="category-filters" class="flex flex-wrap items-center gap-2 mb-1 pt-1 pl-1">
+                    <button data-category="Saved" class="category-btn whitespace-nowrap px-4 py-1.5 rounded-full border border-gray-200/80 dark:border-white/10 text-sm font-medium transition-all hover:bg-gray-100 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400 bg-white/50 dark:bg-gray-800/50 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 fill-current text-yellow-500" viewBox="0 0 20 20"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/></svg>Saved
+                    </button>
+                    <button data-category="All" class="category-btn whitespace-nowrap px-4 py-1.5 rounded-full border border-slate-400 dark:border-slate-500/30 text-sm font-bold transition-all shadow-sm bg-slate-100 text-slate-700 dark:bg-slate-800/50 dark:text-slate-300">All</button>
+                    <button data-category="UX/UI" class="category-btn whitespace-nowrap px-4 py-1.5 rounded-full border border-gray-200/80 dark:border-white/10 text-sm font-medium transition-all hover:bg-gray-100 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400 bg-white/50 dark:bg-gray-800/50">UX/UI</button>
+                    <button data-category="Frontend" class="category-btn whitespace-nowrap px-4 py-1.5 rounded-full border border-gray-200/80 dark:border-white/10 text-sm font-medium transition-all hover:bg-gray-100 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400 bg-white/50 dark:bg-gray-800/50">Frontend</button>
+                    <button data-category="Backend" class="category-btn whitespace-nowrap px-4 py-1.5 rounded-full border border-gray-200/80 dark:border-white/10 text-sm font-medium transition-all hover:bg-gray-100 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400 bg-white/50 dark:bg-gray-800/50">Backend</button>
+                    <button data-category="Culture" class="category-btn whitespace-nowrap px-4 py-1.5 rounded-full border border-gray-200/80 dark:border-white/10 text-sm font-medium transition-all hover:bg-gray-100 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400 bg-white/50 dark:bg-gray-800/50">Culture</button>
+                    <button data-category="AI / Tech" class="category-btn whitespace-nowrap px-4 py-1.5 rounded-full border border-gray-200/80 dark:border-white/10 text-sm font-medium transition-all hover:bg-gray-100 dark:hover:bg-white/5 text-gray-600 dark:text-gray-400 bg-white/50 dark:bg-gray-800/50">AI / Tech</button>
+                </div>
+            </div>
+            
+            <!-- Sort Filter (Text) -->
+            <div class="flex items-center gap-3 text-sm font-semibold shrink-0 px-2 lg:px-4">
+                <button data-sort="newest" class="sort-btn text-gray-900 dark:text-white transition-colors focus:outline-none">최신순</button>
+                <span class="text-gray-300 dark:text-gray-600 font-light">|</span>
+                <button data-sort="oldest" class="sort-btn text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors focus:outline-none">오래된순</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Content Grid -->
+    <main id="article-grid" class="max-w-6xl mx-auto px-6 pb-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Cards will be dynamically injected here by JS -->
+    </main>
+
+    <!-- Article Data and Rendering Script -->
+    <script>
+        const feeds = [
+            // 기존 피드
+            { url: 'https://toss.tech/rss.xml',                         sourceStr: 'Toss Tech',       colorTheme: 'blue' },
+            { url: 'https://designcompass.org/feed/',                    sourceStr: '디자인나침반',      colorTheme: 'emerald' },
+            { url: 'https://tech.kakao.com/blog/feed/',                  sourceStr: '카카오 테크',      colorTheme: 'purple' },
+            { url: 'https://techblog.woowahan.com/feed/',                sourceStr: '우아한형제들',     colorTheme: 'orange' },
+            // 추가 피드
+            { url: 'https://d2.naver.com/d2.atom',                      sourceStr: '네이버 D2',        colorTheme: 'blue' },
+            { url: 'https://tech.kakaopay.com/rss',                     sourceStr: '카카오페이 Tech',   colorTheme: 'purple' },
+            { url: 'https://engineering.linecorp.com/ko/feed',           sourceStr: '라인 엔지니어링',   colorTheme: 'emerald' },
+            { url: 'https://helloworld.kurly.com/feed',                  sourceStr: '컬리 헬로월드',     colorTheme: 'orange' },
+            { url: 'https://meetup.nhncloud.com/rss',                   sourceStr: 'NHN Cloud',        colorTheme: 'blue' },
+            { url: 'https://tech.socarcorp.kr/feed',                    sourceStr: '쏘카 Tech',         colorTheme: 'emerald' },
+            { url: 'https://medium.com/feed/daangn',                    sourceStr: '당근마켓',          colorTheme: 'orange' },
+            { url: 'https://blog.banksalad.com/rss.xml',                sourceStr: '뱅크샐러드',        colorTheme: 'purple' },
+            { url: 'https://medium.com/feed/musinsa-tech',              sourceStr: '무신사 테크',        colorTheme: 'blue' },
+            { url: 'https://devblog.kakaostyle.com/rss.xml',            sourceStr: '지그재그',          colorTheme: 'purple' },
+            { url: 'https://blog.gangnamunni.com/feed.xml',             sourceStr: '강남언니',          colorTheme: 'orange' },
+            { url: 'https://yozm.wishket.com/magazine/feed/',           sourceStr: '요즘IT',           colorTheme: 'emerald' },
+            { url: 'https://channel.io/ko/blog',                        sourceStr: '채널톡',            colorTheme: 'blue' },
+        ];
+
+        const categoryColorMap = {
+            'Saved':   { text: "text-yellow-600 dark:text-yellow-400", hoverIcon: "group-hover:bg-yellow-500 group-hover:border-yellow-500", groupHoverText: "group-hover:text-yellow-600 dark:group-hover:text-yellow-400", focusRing: "focus-visible:ring-yellow-500/50" },
+            'UX/UI':   { text: "text-pink-600 dark:text-pink-400",   hoverIcon: "group-hover:bg-pink-600 group-hover:border-pink-600",   groupHoverText: "group-hover:text-pink-600 dark:group-hover:text-pink-400",   focusRing: "focus-visible:ring-pink-500/50" },
+            'Frontend':{ text: "text-blue-600 dark:text-blue-400",   hoverIcon: "group-hover:bg-blue-600 group-hover:border-blue-600",   groupHoverText: "group-hover:text-blue-600 dark:group-hover:text-blue-400",   focusRing: "focus-visible:ring-blue-500/50" },
+            'Backend': { text: "text-emerald-600 dark:text-emerald-400", hoverIcon: "group-hover:bg-emerald-600 group-hover:border-emerald-600", groupHoverText: "group-hover:text-emerald-600 dark:group-hover:text-emerald-400", focusRing: "focus-visible:ring-emerald-500/50" },
+            'Culture': { text: "text-orange-600 dark:text-orange-400", hoverIcon: "group-hover:bg-orange-600 group-hover:border-orange-600", groupHoverText: "group-hover:text-orange-600 dark:group-hover:text-orange-400", focusRing: "focus-visible:ring-orange-500/50" },
+            'AI / Tech':{ text: "text-purple-600 dark:text-purple-400", hoverIcon: "group-hover:bg-purple-600 group-hover:border-purple-600", groupHoverText: "group-hover:text-purple-600 dark:group-hover:text-purple-400", focusRing: "focus-visible:ring-purple-500/50" },
+            'Tech':    { text: "text-slate-600 dark:text-slate-400", hoverIcon: "group-hover:bg-slate-600 group-hover:border-slate-600", groupHoverText: "group-hover:text-slate-600 dark:group-hover:text-slate-400", focusRing: "focus-visible:ring-slate-500/50" }
+        };
+
+        const buttonColorMap = {
+            'Saved':    ['border-yellow-400', 'dark:border-yellow-500/30', 'bg-yellow-50', 'text-yellow-700', 'dark:bg-yellow-900/40', 'dark:text-yellow-300'],
+            'All':      ['border-slate-400',  'dark:border-slate-500/30',  'bg-slate-100', 'text-slate-700',  'dark:bg-slate-800/50',  'dark:text-slate-300'],
+            'UX/UI':    ['border-pink-300',    'dark:border-pink-500/30',   'bg-pink-50',   'text-pink-700',   'dark:bg-pink-900/40',   'dark:text-pink-300'],
+            'Frontend': ['border-blue-300',    'dark:border-blue-500/30',   'bg-blue-50',   'text-blue-700',   'dark:bg-blue-900/40',   'dark:text-blue-300'],
+            'Backend':  ['border-emerald-300', 'dark:border-emerald-500/30','bg-emerald-50','text-emerald-700','dark:bg-emerald-900/40', 'dark:text-emerald-300'],
+            'Product':  ['border-orange-300',  'dark:border-orange-500/30', 'bg-orange-50', 'text-orange-700', 'dark:bg-orange-900/40',  'dark:text-orange-300'],
+            'Culture':  ['border-orange-300',  'dark:border-orange-500/30', 'bg-orange-50', 'text-orange-700', 'dark:bg-orange-900/40',  'dark:text-orange-300'],
+            'AI / Tech':['border-purple-300',  'dark:border-purple-500/30', 'bg-purple-50', 'text-purple-700', 'dark:bg-purple-900/40',  'dark:text-purple-300']
+        };
+
+        function stripHtml(html) {
+            const tmp = document.createElement("DIV");
+            tmp.innerHTML = html || "";
+            const text = (tmp.textContent || tmp.innerText || "").replace(/\s+/g, ' ').trim();
+            return text.length > 200 ? text.substring(0, 200) + '…' : text;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString.replace(/-/g, '/')); // for mobile Safari compatibility
+            if (isNaN(date.getTime())) return dateString;
+            return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        async function fetchFeed(feedDef) {
+            const apiEndpoint = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedDef.url)}`;
+            try {
+                const res = await fetch(apiEndpoint);
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    return data.items.map(item => ({
+                        title: item.title,
+                        link: item.link,
+                        author: item.author || feedDef.sourceStr,
+                        pubDate: item.pubDate,
+                        timestamp: new Date(item.pubDate.replace(/-/g, '/')).getTime() || 0,
+                        description: stripHtml(item.description),
+                        thumbnail: item.thumbnail || (item.enclosure && item.enclosure.link) || null,
+                        category: (item.categories && item.categories.length > 0) ? item.categories[0] : feedDef.sourceStr,
+                        color: feedDef.colorTheme
+                    }));
+                }
+            } catch (err) {
+                console.error("Feed fetch failed for", feedDef.url, err);
+            }
+            return [];
+        }
+
+        let globalArticles = [];
+        let currentCategory = 'All';
+        let currentSort = 'newest';
+        let savedArticles = new Set(JSON.parse(localStorage.getItem('saved-articles') || '[]'));
+
+        window.toggleSave = function(link, event) {
+            if(event) { event.preventDefault(); event.stopPropagation(); }
+            if (savedArticles.has(link)) {
+                savedArticles.delete(link);
+            } else {
+                savedArticles.add(link);
+            }
+            localStorage.setItem('saved-articles', JSON.stringify(Array.from(savedArticles)));
+            drawGrid(); // Re-render instantly to update visual states
+        };
+
+        const categoryKeywords = {
+            // 디자인·UX 전용 키워드 (피그마, 프로토타입 등 확실한 디자인 도구)
+            'UX/UI':    ['ux', 'ui', '피그마', 'figma', '인터페이스', '접근성', '사용성', '프로토타입', '인터랙션', '타이포그래피', '와이어프레임', 'usability', 'accessibility', 'bx', '서비스디자인', '디자인시스템', 'design system'],
+            // 프론트엔드 전용 (확실한 프론트 기술 스택)
+            'Frontend': ['프론트엔드', 'frontend', '리액트', 'react', '뷰', 'vue', '앵귤러', 'angular', '자바스크립트', 'javascript', 'typescript', 'css', 'html', 'next.js', 'nextjs', 'svelte', '웹앱', '렌더링'],
+            // 백엔드/인프라 전용 (서버 기술 스택)
+            'Backend':  ['백엔드', 'backend', '서버', 'server', 'api', 'rest', 'graphql', '데이터베이스', 'database', 'sql', 'mysql', 'postgresql', 'mongodb', '인프라', 'infrastructure', '클라우드', 'aws', 'gcp', 'kubernetes', 'docker', '배포', 'ci/cd', '마이크로서비스', 'msa'],
+            // 조직문화·커리어 전용
+            'Culture':  ['조직문화', '회고', 'retrospective', '온보딩', 'onboarding', '채용', 'hiring', '리더십', 'leadership', '커리어', 'career', '주니어', '시니어', '일하는 방식', '팀빌딩', '워크샵', '번아웃', '성장', '개발자 문화', '협업'],
+            // AI 전용 (AI/ML 고유 용어)
+            'AI / Tech':['ai', '인공지능', 'llm', 'gpt', 'chatgpt', '머신러닝', 'machine learning', '딥러닝', 'deep learning', '파인튜닝', 'fine-tuning', 'rag', '임베딩', 'embedding', '프롬프트', 'prompt', '생성형', 'generative']
+        };
+
+        function getFallbackThumbnail(article) {
+            const hasKeyword = (cat) => {
+                if (!categoryKeywords[cat]) return false;
+                const regex = new RegExp(categoryKeywords[cat].join('|'), 'i');
+                return regex.test(article.title) || regex.test(article.category) || regex.test(article.description);
+            };
+            
+            if (hasKeyword('UX/UI')) return 'assets/thumbnail-design.png';
+            if (hasKeyword('Backend') || hasKeyword('AI / Tech') || hasKeyword('Frontend')) return 'assets/thumbnail-tech.png';
+            if (hasKeyword('Product')) return 'assets/thumbnail-business.png';
+            return 'assets/default-thumbnail.png'; // default
+        }
+
+        function getDisplayCategory(article) {
+            for (const [catName, keywords] of Object.entries(categoryKeywords)) {
+                const regex = new RegExp(keywords.join('|'), 'i');
+                if (regex.test(article.title) || regex.test(article.category) || regex.test(article.description)) {
+                    return catName;
+                }
+            }
+            return 'Tech'; // Default fallback
+        }
+
+        function drawGrid() {
+            const grid = document.getElementById('article-grid');
+            let filtered = [...globalArticles];
+
+            if (currentCategory === 'Saved') {
+                filtered = filtered.filter(a => savedArticles.has(a.link));
+            } else if (currentCategory !== 'All') {
+                // 필터 탭과 카드 뱃지를 완전히 일치시키기 위해 getDisplayCategory() 기준으로 필터링
+                filtered = filtered.filter(a => getDisplayCategory(a) === currentCategory);
+            }
+
+            filtered.sort((a, b) => {
+                return currentSort === 'newest' ? b.timestamp - a.timestamp : a.timestamp - b.timestamp;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full py-24 text-center text-gray-500 dark:text-gray-400">해당 카테고리에 일치하는 아티클이 없습니다.</div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(article => {
+                const displayCategory = getDisplayCategory(article);
+                const theme = categoryColorMap[displayCategory] || categoryColorMap['Tech'];
+                const dateStr = formatDate(article.pubDate);
+                const isSaved = savedArticles.has(article.link);
+                let domain = '';
+                try {
+                    // Extract domain from article link
+                    domain = new URL(article.link).hostname;
+                } catch(e) {
+                    domain = '';
+                }
+                const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : '';
+
+                return `
+        <div class="relative block h-full outline-none focus-within:ring-2 ${theme.focusRing} rounded-[2rem]">
+            <article class="relative glass p-8 rounded-[2rem] hover:-translate-y-2 transition-all duration-500 ease-out flex flex-col h-full border border-white/60 hover:border-white dark:border-white/10 dark:hover:border-white/30 hover:shadow-2xl hover:shadow-blue-900/5 dark:hover:shadow-black/50 group">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-[0.65rem] font-bold ${theme.text} uppercase tracking-widest truncate mt-1">${displayCategory}</span>
+                    <button onclick="toggleSave('${article.link.replace(/'/g, "\\'")}', event)" class="relative z-20 p-1.5 -mr-2 -mt-2 rounded-full focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors" title="${isSaved ? '저장 취소' : '아티클 저장'}">
+                        <svg class="w-6 h-6 ${isSaved ? 'text-yellow-500 fill-current' : 'text-gray-300 dark:text-gray-600 fill-none stroke-current stroke-2 hover:text-gray-400 transition-colors'}" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                    </button>
+                </div>
+                <h3 class="text-2xl font-bold mt-2 mb-4">
+                    <a href="${article.link}" target="_blank" rel="noopener noreferrer" class="outline-none before:absolute before:inset-0 before:z-0 line-clamp-2 break-keep text-gray-900 dark:text-white ${theme.groupHoverText} transition-colors">
+                        ${article.title}
+                    </a>
+                </h3>
+                <p class="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed text-sm opacity-90 line-clamp-3 break-keep">${article.description}</p>
+                
+                <div class="text-sm font-semibold text-gray-400 dark:text-gray-500 flex items-center justify-between border-t border-gray-100 dark:border-white/5 pt-5 mt-auto transition-colors pointer-events-none">
+                    <div class="flex items-center overflow-hidden pr-3 gap-2.5">
+                        ${faviconUrl ? `<img src="${faviconUrl}" alt="${article.author} 로고" class="w-7 h-7 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm shrink-0 object-contain p-[2px]">` : ''}
+                        <div class="flex flex-col overflow-hidden">
+                            <span class="text-gray-700 dark:text-gray-300 font-bold truncate">${article.author}</span>
+                            <span class="text-xs font-normal mt-0.5 opacity-70">${dateStr}</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-white/5 flex items-center justify-center ${theme.hoverIcon} group-hover:text-white transition-colors shrink-0 ml-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
+                </div>
+            </article>
+        </div>`;
+            }).join('');
+        }
+
+        async function initArticles() {
+            const grid = document.getElementById('article-grid');
+            grid.innerHTML = '<div class="col-span-full py-24 text-center text-gray-500 dark:text-gray-400 animate-pulse font-medium text-lg">실시간 피드를 불러오는 중입니다...</div>';
+
+            try {
+                const results = await Promise.all(feeds.map(fetchFeed));
+                globalArticles = results.flat().sort((a, b) => b.timestamp - a.timestamp);
+                drawGrid();
+            } catch (err) {
+                grid.innerHTML = '<div class="col-span-full py-24 text-center text-red-500">데이터를 불러오는 중 오류가 발생했습니다.</div>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initArticles();
+
+            // Set up category filter listeners
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const target = e.currentTarget;
+                    
+                    // Reset all styles to unselected
+                    buttons.forEach(b => {
+                        const bCat = b.getAttribute('data-category');
+                        const activeClasses = buttonColorMap[bCat] || buttonColorMap['All'];
+                        b.classList.remove(...activeClasses, 'font-bold', 'shadow-sm');
+                        b.classList.add('border-gray-200/80', 'dark:border-white/10', 'font-medium', 'text-gray-600', 'dark:text-gray-400', 'bg-white/50', 'dark:bg-gray-800/50', 'hover:bg-gray-100', 'dark:hover:bg-white/5');
+                    });
+                    
+                    // Apply active style to clicked button
+                    target.classList.remove('border-gray-200/80', 'dark:border-white/10', 'font-medium', 'text-gray-600', 'dark:text-gray-400', 'bg-white/50', 'dark:bg-gray-800/50', 'hover:bg-gray-100', 'dark:hover:bg-white/5');
+                    
+                    const cat = target.getAttribute('data-category');
+                    const activeClasses = buttonColorMap[cat] || buttonColorMap['All'];
+                    target.classList.add(...activeClasses, 'font-bold', 'shadow-sm');
+                    
+                    currentCategory = cat;
+                    drawGrid();
+                });
+            });
+
+            // Set up sort filter listeners
+            const sortButtons = document.querySelectorAll('.sort-btn');
+            
+            sortButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const target = e.currentTarget;
+                    if (currentSort === target.dataset.sort) return;
+                    
+                    sortButtons.forEach(b => {
+                        b.classList.remove('text-gray-900', 'dark:text-white');
+                        b.classList.add('text-gray-400', 'dark:text-gray-500', 'hover:text-gray-600', 'dark:hover:text-gray-300');
+                    });
+                    
+                    target.classList.remove('text-gray-400', 'dark:text-gray-500', 'hover:text-gray-600', 'dark:hover:text-gray-300');
+                    target.classList.add('text-gray-900', 'dark:text-white');
+                    
+                    currentSort = target.dataset.sort;
+                    drawGrid();
+                });
+            });
+        });
+    </script>
+
+    <!-- Theme Toggle Script -->
+    <script>
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+        // Check initial theme preference
+        if (localStorage.getItem('color-theme') === 'dark') {
+            themeToggleLightIcon.classList.remove('hidden');
+            document.documentElement.classList.add('dark');
+        } else {
+            // Default to Light Mode unconditionally
+            localStorage.setItem('color-theme', 'light');
+            themeToggleDarkIcon.classList.remove('hidden');
+            document.documentElement.classList.remove('dark');
+        }
+
+        const themeToggleBtn = document.getElementById('theme-toggle');
+
+        themeToggleBtn.addEventListener('click', function() {
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
