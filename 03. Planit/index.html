@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planit — 기획자의 성장 기록</title>
+  <meta name="description" content="Planit — 신입 기획자를 위한 데일리 기록 도구. 업무 기록, 용어 사전, 성장 대시보드를 한 곳에서." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== ONBOARDING OVERLAY ===== -->
+  <div id="onboarding-overlay" class="onboarding-overlay hidden">
+    <div class="onboarding-modal">
+      <div class="onboarding-progress">
+        <div class="progress-dot active" id="dot-0"></div>
+        <div class="progress-dot" id="dot-1"></div>
+        <div class="progress-dot" id="dot-2"></div>
+        <div class="progress-dot" id="dot-3"></div>
+      </div>
+
+      <!-- Step 0: Welcome -->
+      <div class="onboarding-step active" id="step-0">
+        <span class="onboarding-emoji">📋✨</span>
+        <h1>Planit에<br/>오신 걸 환영해요!</h1>
+        <p>신입 기획자의 성장을 돕는<br/>나만의 데일리 기록 공간입니다.</p>
+        <div class="ob-input-group">
+          <label for="user-name-input">어떻게 불러드릴까요?</label>
+          <input type="text" id="user-name-input" placeholder="이름 또는 닉네임을 입력해 주세요" maxlength="20"
+            onkeydown="if(event.key==='Enter' && !event.isComposing) nextStep()" />
+        </div>
+        <button class="onboarding-btn" onclick="nextStep()">시작하기 →</button>
+      </div>
+
+      <!-- Step 1: Daily View -->
+      <div class="onboarding-step" id="step-1">
+        <span class="onboarding-emoji">📝</span>
+        <h2>오늘의 기록</h2>
+        <p>매일 아침 목표를 세우고,<br/>업무·학습·회의를 기록해요.<br/>저녁엔 KPT 회고로 하루를 마무리!</p>
+        <ul class="feature-list">
+          <li>✅ 할 일 체크리스트로 완료율 추적</li>
+          <li>📋 회의 메모 & 아이디어 빠르게 기록</li>
+          <li>🔄 KPT 회고 (Keep · Problem · Try)</li>
+        </ul>
+        <div class="onboarding-nav">
+          <button class="onboarding-btn-ghost" onclick="prevStep()">← 이전</button>
+          <button class="onboarding-btn" onclick="nextStep()">다음 →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Glossary -->
+      <div class="onboarding-step" id="step-2">
+        <span class="onboarding-emoji">📚</span>
+        <h2>용어 사전</h2>
+        <p>낯선 기획 용어들을 정리해두고<br/>언제든 검색해서 찾아볼 수 있어요.</p>
+        <ul class="feature-list">
+          <li>🔍 실시간 검색 필터링</li>
+          <li>🏷️ 태그별 카테고리 분류</li>
+          <li>📅 처음 배운 날짜 자동 기록</li>
+        </ul>
+        <div class="onboarding-nav">
+          <button class="onboarding-btn-ghost" onclick="prevStep()">← 이전</button>
+          <button class="onboarding-btn" onclick="nextStep()">다음 →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Dashboard -->
+      <div class="onboarding-step" id="step-3">
+        <span class="onboarding-emoji">📊</span>
+        <h2>성장 대시보드</h2>
+        <p>꾸준한 기록이 성장으로!<br/>나의 활동을 한눈에 확인해요.</p>
+        <ul class="feature-list">
+          <li>🔥 연속 기록 스트릭 카운터</li>
+          <li>📅 월간 기록 히트맵</li>
+          <li>💬 받은 피드백 카드 (태그 기반)</li>
+        </ul>
+        <div class="onboarding-nav">
+          <button class="onboarding-btn-ghost" onclick="prevStep()">← 이전</button>
+          <button class="onboarding-btn primary-glow" onclick="finishOnboarding()">기록 시작하기 🚀</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN APP ===== -->
+  <div class="app-container" id="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon"><i data-lucide="clipboard-check"></i></span>
+          <div class="logo-text">
+            <span class="logo-title">Planit</span>
+            <span class="logo-subtitle" id="sidebar-username">안녕하세요!</span>
+          </div>
+          <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="라이트/다크 모드 전환" aria-label="테마 전환">
+            <i data-lucide="moon" class="icon-theme-dark"></i>
+            <i data-lucide="sun" class="icon-theme-light"></i>
+          </button>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" id="nav-daily" onclick="switchView('daily')">
+          <span class="nav-icon"><i data-lucide="calendar-days"></i></span>
+          <span class="nav-label">오늘의 기록</span>
+        </button>
+        <button class="nav-item" id="nav-glossary" onclick="switchView('glossary')">
+          <span class="nav-icon"><i data-lucide="book-open"></i></span>
+          <span class="nav-label">용어 사전</span>
+          <span class="nav-badge" id="glossary-count">0</span>
+        </button>
+        <button class="nav-item" id="nav-dashboard" onclick="switchView('dashboard')">
+          <span class="nav-icon"><i data-lucide="bar-chart-3"></i></span>
+          <span class="nav-label">성장 대시보드</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="footer-btn" id="btn-export-json" onclick="exportData('json')" title="JSON으로 내보내기">
+          <i data-lucide="download"></i><span class="footer-btn-text">JSON 내보내기</span>
+        </button>
+        <button class="footer-btn" id="btn-export-csv" onclick="exportData('csv')" title="CSV로 내보내기">
+          <i data-lucide="table-2"></i><span class="footer-btn-text">CSV 내보내기</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="main-content">
+
+      <!-- ==================== DAILY VIEW ==================== -->
+      <div class="view active" id="view-daily">
+
+        <!-- Date Header -->
+        <div class="view-header daily-header">
+          <div class="date-nav">
+            <button class="date-btn" onclick="navigateDate(-1)" title="전날" id="btn-prev-day">‹</button>
+            <div class="date-display">
+              <input type="date" id="date-picker" onchange="loadDay(this.value)" />
+              <div class="date-text">
+                <span class="date-main" id="date-main">—</span>
+                <span class="date-sub" id="date-sub">—</span>
+              </div>
+            </div>
+            <button class="date-btn" onclick="navigateDate(1)" title="다음날" id="btn-next-day">›</button>
+            <button class="today-btn" onclick="goToToday()" id="btn-today">오늘</button>
+          </div>
+
+          <div class="header-selectors">
+            <div class="selector-group">
+              <span class="selector-label">날씨</span>
+              <div class="emoji-group" id="weather-group">
+                <button class="emoji-btn" data-value="☀️" onclick="selectEmoji('weather', this)" title="맑음"><i data-lucide="sun"></i></button>
+                <button class="emoji-btn" data-value="⛅" onclick="selectEmoji('weather', this)" title="구름조금"><i data-lucide="cloud-sun"></i></button>
+                <button class="emoji-btn" data-value="🌧️" onclick="selectEmoji('weather', this)" title="비"><i data-lucide="cloud-rain"></i></button>
+                <button class="emoji-btn" data-value="🌩️" onclick="selectEmoji('weather', this)" title="천둥"><i data-lucide="cloud-lightning"></i></button>
+                <button class="emoji-btn" data-value="❄️" onclick="selectEmoji('weather', this)" title="눈"><i data-lucide="snowflake"></i></button>
+              </div>
+            </div>
+            <div class="selector-group">
+              <span class="selector-label">기분</span>
+              <div class="emoji-group" id="mood-group">
+                <button class="emoji-btn" data-value="🔥" onclick="selectEmoji('mood', this)" title="불타오름"><i data-lucide="flame"></i></button>
+                <button class="emoji-btn" data-value="😊" onclick="selectEmoji('mood', this)" title="좋음"><i data-lucide="smile"></i></button>
+                <button class="emoji-btn" data-value="😐" onclick="selectEmoji('mood', this)" title="보통"><i data-lucide="meh"></i></button>
+                <button class="emoji-btn" data-value="😔" onclick="selectEmoji('mood', this)" title="힘듦"><i data-lucide="frown"></i></button>
+                <button class="emoji-btn" data-value="😴" onclick="selectEmoji('mood', this)" title="피곤"><i data-lucide="moon"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="save-indicator" id="save-indicator">
+            <span class="save-dot"></span>
+            <span id="save-text">자동 저장됨</span>
+          </div>
+        </div>
+
+        <!-- Daily Grid -->
+        <div class="daily-grid">
+
+          <!-- Morning Card -->
+          <div class="card morning-card">
+            <div class="card-header">
+              <h2><i data-lucide="sun-medium" class="card-icon"></i> 하루 시작</h2>
+            </div>
+            <div class="card-body">
+              <div class="field-group">
+                <label class="field-label">
+                  오늘의 마음가짐
+                </label>
+                <input type="text" id="mindset" class="field-input"
+                  placeholder="오늘 하루를 한 문장으로..." oninput="scheduleSave()" />
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">
+                  오늘의 목표
+                  <span class="badge-count" id="goal-count">0/3</span>
+                </label>
+                <div class="goals-list" id="goals-list">
+                  <div class="goal-item">
+                    <span class="goal-num">1</span>
+                    <input type="text" class="goal-input" placeholder="목표를 입력하세요" oninput="updateGoals()" />
+                  </div>
+                  <div class="goal-item">
+                    <span class="goal-num">2</span>
+                    <input type="text" class="goal-input" placeholder="목표를 입력하세요" oninput="updateGoals()" />
+                  </div>
+                  <div class="goal-item">
+                    <span class="goal-num">3</span>
+                    <input type="text" class="goal-input" placeholder="목표를 입력하세요" oninput="updateGoals()" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">
+                  할 일 목록
+                  <span class="badge-count" id="todo-progress">0/0</span>
+                </label>
+                <div class="todo-list" id="todo-list"></div>
+                <div class="todo-input-row">
+                  <input type="text" id="todo-input" class="todo-new-input"
+                    placeholder="+ 할 일 추가 (Enter)" onkeydown="if(event.key==='Enter' && !event.isComposing) addTodo()" />
+                  <button class="add-todo-btn" onclick="addTodo()" id="btn-add-todo">추가</button>
+                </div>
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar" id="todo-bar" style="width:0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Work Log Card -->
+          <div class="card work-card">
+            <div class="card-header">
+              <h2><i data-lucide="file-text" class="card-icon"></i> 업무 기록</h2>
+              <button class="pdf-btn" onclick="exportWorkPDF()" title="업무 기록 PDF로 저장" id="btn-export-work-pdf">📄 PDF 저장</button>
+            </div>
+            <div class="card-body">
+              <div class="collapsible-section">
+                <button class="collapse-btn" onclick="toggleSection(this)" id="btn-collapse-meetings">
+                  <span><i data-lucide="message-circle" class="section-icon"></i> 회의 메모</span>
+                  <span class="collapse-icon">▾</span>
+                </button>
+                <div class="collapse-content open">
+                  <textarea id="meetings" class="field-textarea"
+                    placeholder="회의 날짜, 참석자, 결정사항, 액션아이템..." rows="4" oninput="scheduleSave()"></textarea>
+                </div>
+              </div>
+              <div class="collapsible-section">
+                <button class="collapse-btn" onclick="toggleSection(this)" id="btn-collapse-ideas">
+                  <span><i data-lucide="lightbulb" class="section-icon"></i> 아이디어 메모</span>
+                  <span class="collapse-icon">▾</span>
+                </button>
+                <div class="collapse-content open">
+                  <textarea id="ideas" class="field-textarea"
+                    placeholder="떠오른 아이디어, 레퍼런스..." rows="3" oninput="scheduleSave()"></textarea>
+                </div>
+              </div>
+              <div class="collapsible-section">
+                <button class="collapse-btn" onclick="toggleSection(this)" id="btn-collapse-issues">
+                  <span><i data-lucide="wrench" class="section-icon"></i> 이슈 &amp; 해결</span>
+                  <span class="collapse-icon">▾</span>
+                </button>
+                <div class="collapse-content open">
+                  <textarea id="issues" class="field-textarea"
+                    placeholder="만난 문제 → 해결 방법..." rows="3" oninput="scheduleSave()"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Learning Card -->
+          <div class="card learning-card">
+            <div class="card-header">
+              <h2><i data-lucide="book-open" class="card-icon"></i> 배움 기록</h2>
+              <button class="pdf-btn" onclick="exportLearningPDF()" title="배움 기록 PDF로 저장" id="btn-export-learning-pdf">📄 PDF 저장</button>
+            </div>
+            <div class="card-body">
+              <div class="field-group">
+                <label class="field-label">오늘 배운 것</label>
+                 <textarea id="learned" class="field-textarea"
+                  placeholder="업무, 피드백, 공부에서 얻은 인사이트..." rows="12" oninput="scheduleSave()"></textarea>
+              </div>
+              <div class="field-group">
+                <label class="field-label">새로 알게 된 용어</label>
+                <div class="tag-input-wrap">
+                  <div class="tag-list" id="learned-terms"></div>
+                  <input type="text" id="term-input" class="tag-new-input"
+                    placeholder="용어 입력 후 Enter..."
+                    onkeydown="if(event.key==='Enter' && !event.isComposing) addLearnedTerm()" />
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">참고 자료 / 레퍼런스</label>
+                <textarea id="references" class="field-textarea"
+                  placeholder="URL, 책, 아티클 제목..." rows="2" oninput="scheduleSave()"></textarea>
+              </div>
+              <div class="field-group">
+                <label class="field-label">캡처 이미지</label>
+                <div class="image-paste-zone" id="image-paste-zone">
+                  <div class="image-paste-hint" id="image-paste-hint" onclick="document.getElementById('image-file-input').click()">
+                    <i data-lucide="camera"></i>
+                    <span>Ctrl+V 로 붙여넣거나 클릭해서 파일 선택</span>
+                  </div>
+                  <div class="day-images-grid" id="day-images"></div>
+                </div>
+                <input type="file" id="image-file-input" accept="image/*" multiple style="display:none"
+                  onchange="handleImageFileSelect(event)" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Evening Review Card -->
+          <div class="card evening-card">
+            <div class="card-header">
+              <h2><i data-lucide="refresh-cw" class="card-icon"></i> 하루 마무리</h2>
+            </div>
+            <div class="card-body">
+              <div class="kpt-grid">
+                <div class="kpt-item keep">
+                  <div class="kpt-label">
+                    <span class="kpt-icon"><i data-lucide="circle-check"></i></span>
+                    <span class="kpt-name">Keep</span>
+                    <span class="kpt-desc">잘한 것, 계속할 것</span>
+                  </div>
+                  <textarea id="kpt-keep" class="field-textarea kpt-textarea"
+                    placeholder="오늘 잘한 점이나 계속 유지할 행동..." rows="3" oninput="scheduleSave()"></textarea>
+                </div>
+                <div class="kpt-item problem">
+                  <div class="kpt-label">
+                    <span class="kpt-icon"><i data-lucide="triangle-alert"></i></span>
+                    <span class="kpt-name">Problem</span>
+                    <span class="kpt-desc">개선이 필요한 것</span>
+                  </div>
+                  <textarea id="kpt-problem" class="field-textarea kpt-textarea"
+                    placeholder="아쉬웠던 점, 개선해야 할 것..." rows="3" oninput="scheduleSave()"></textarea>
+                </div>
+                <div class="kpt-item try">
+                  <div class="kpt-label">
+                    <span class="kpt-icon"><i data-lucide="zap"></i></span>
+                    <span class="kpt-name">Try</span>
+                    <span class="kpt-desc">내일 시도할 것</span>
+                  </div>
+                  <textarea id="kpt-try" class="field-textarea kpt-textarea"
+                    placeholder="내일 새롭게 시도해볼 것..." rows="3" oninput="scheduleSave()"></textarea>
+                </div>
+              </div>
+              <div class="field-group" style="margin-top:1rem">
+                <label class="field-label"><i data-lucide="pin" class="label-icon"></i> 내일 준비할 일</label>
+                <textarea id="tomorrow" class="field-textarea"
+                  placeholder="내일 미리 챙겨야 할 것들..." rows="2" oninput="scheduleSave()"></textarea>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <!-- END DAILY VIEW -->
+
+      <!-- ==================== GLOSSARY VIEW ==================== -->
+      <div class="view" id="view-glossary">
+        <div class="view-header">
+          <h1 class="view-title"><i data-lucide="book-open" class="title-icon"></i> 용어 사전</h1>
+          <button class="primary-btn" onclick="openGlossaryModal()" id="btn-add-glossary">+ 용어 추가</button>
+        </div>
+
+        <div class="glossary-controls">
+          <div class="search-wrap">
+            <span class="search-icon"><i data-lucide="search"></i></span>
+            <input type="text" id="glossary-search" class="search-input"
+              placeholder="용어 또는 설명 검색..." oninput="filterGlossary()" />
+          </div>
+          <div class="tag-filters" id="tag-filters">
+            <button class="tag-filter active" data-tag="all" onclick="filterByTag(this)">전체</button>
+          </div>
+        </div>
+
+        <div class="glossary-grid" id="glossary-grid"></div>
+        <div class="empty-state" id="glossary-empty" style="display:none">
+          <div class="empty-emoji">📖</div>
+          <p>아직 등록된 용어가 없어요.<br/>낯선 용어를 만나면 바로 기록해 두세요!</p>
+        </div>
+      </div>
+
+      <!-- Glossary Modal -->
+      <div class="modal-overlay" id="glossary-modal" onclick="closeGlossaryModal(event)">
+        <div class="modal">
+          <div class="modal-header">
+            <h3 id="glossary-modal-title">용어 추가</h3>
+            <button class="modal-close" onclick="closeGlossaryModal()" id="btn-close-glossary-modal"><i data-lucide="x"></i></button>
+          </div>
+          <div class="modal-body">
+            <div class="field-group">
+              <label class="field-label">용어 <span style="color:#f093fb">*</span></label>
+              <input type="text" id="gloss-term" class="field-input" placeholder="예: MVP, UX, 스프린트..." />
+            </div>
+            <div class="field-group">
+              <label class="field-label">뜻 / 설명 <span style="color:#f093fb">*</span></label>
+              <textarea id="gloss-def" class="field-textarea"
+                placeholder="이 용어가 무엇을 의미하는지 설명..." rows="3"></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label">태그</label>
+              <div class="preset-tags" id="gloss-preset-tags">
+                <button class="preset-tag" onclick="togglePresetTag(this,'gloss')" data-tag="기획">기획</button>
+                <button class="preset-tag" onclick="togglePresetTag(this,'gloss')" data-tag="UX">UX</button>
+                <button class="preset-tag" onclick="togglePresetTag(this,'gloss')" data-tag="개발">개발</button>
+                <button class="preset-tag" onclick="togglePresetTag(this,'gloss')" data-tag="비즈니스">비즈니스</button>
+                <button class="preset-tag" onclick="togglePresetTag(this,'gloss')" data-tag="마케팅">마케팅</button>
+                <button class="preset-tag" onclick="togglePresetTag(this,'gloss')" data-tag="데이터">데이터</button>
+                <button class="preset-tag" onclick="togglePresetTag(this,'gloss')" data-tag="애자일">애자일</button>
+              </div>
+              <input type="text" id="gloss-custom-tag" class="field-input"
+                placeholder="직접 태그 추가 후 Enter" style="margin-top:0.5rem"
+                onkeydown="if(event.key==='Enter' && !event.isComposing) addCustomTag('gloss')" />
+              <div class="selected-tags" id="gloss-selected-tags"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="ghost-btn" onclick="closeGlossaryModal()" >취소</button>
+            <button class="primary-btn" onclick="saveGlossaryTerm()" id="btn-save-gloss">저장</button>
+          </div>
+        </div>
+      </div>
+      <!-- END GLOSSARY VIEW -->
+
+      <!-- ==================== DASHBOARD VIEW ==================== -->
+      <div class="view" id="view-dashboard">
+        <div class="view-header">
+          <h1 class="view-title"><i data-lucide="bar-chart-3" class="title-icon"></i> 성장 대시보드</h1>
+          <button class="primary-btn" onclick="openFeedbackModal()" id="btn-add-feedback">+ 피드백 추가</button>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon"><i data-lucide="flame"></i></div>
+            <div class="stat-value" id="stat-streak">0</div>
+            <div class="stat-label">연속 기록</div>
+            <div class="stat-sub">일 연속</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i data-lucide="circle-check-big"></i></div>
+            <div class="stat-value" id="stat-completion">0%</div>
+            <div class="stat-label">할 일 완료율</div>
+            <div class="stat-sub">이번 주 평균</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i data-lucide="library"></i></div>
+            <div class="stat-value" id="stat-terms">0</div>
+            <div class="stat-label">누적 용어</div>
+            <div class="stat-sub">개 등록됨</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i data-lucide="calendar-check"></i></div>
+            <div class="stat-value" id="stat-records">0</div>
+            <div class="stat-label">총 기록일</div>
+            <div class="stat-sub">일 기록</div>
+          </div>
+        </div>
+
+        <!-- Heatmap -->
+        <div class="card" style="margin-bottom:1.25rem">
+          <div class="card-header">
+            <h2 id="heatmap-title"><i data-lucide="calendar-range" class="card-icon"></i> 이번 달 기록 현황</h2>
+            <div class="heatmap-legend">
+              <span>적음</span>
+              <div class="legend-dots">
+                <div class="legend-dot l0"></div>
+                <div class="legend-dot l1"></div>
+                <div class="legend-dot l2"></div>
+                <div class="legend-dot l3"></div>
+              </div>
+              <span>많음</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="heatmap-container" id="heatmap"></div>
+          </div>
+        </div>
+
+        <!-- KPT Summary -->
+        <div class="card" style="margin-bottom:1.25rem">
+          <div class="card-header">
+            <h2><i data-lucide="refresh-cw" class="card-icon"></i> 최근 KPT 회고</h2>
+          </div>
+          <div class="card-body">
+            <div class="kpt-summary" id="kpt-summary">
+              <div class="empty-state-inline">아직 회고 기록이 없어요. 오늘의 기록에서 KPT를 작성해보세요!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feedback Notes -->
+        <div class="card">
+          <div class="card-header">
+            <h2><i data-lucide="message-square" class="card-icon"></i> 받은 피드백 노트</h2>
+          </div>
+          <div class="card-body">
+            <div class="feedback-tag-filters" id="feedback-tag-filters">
+              <button class="tag-filter active" data-tag="all" onclick="filterFeedback(this)">전체</button>
+            </div>
+            <div class="feedback-grid" id="feedback-grid"></div>
+            <div class="empty-state-inline" id="feedback-empty">
+              받은 피드백을 기록해두면 성장의 흔적이 됩니다!<br/>위 버튼으로 추가해보세요.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback Modal -->
+      <div class="modal-overlay" id="feedback-modal" onclick="closeFeedbackModal(event)">
+        <div class="modal">
+          <div class="modal-header">
+            <h3>피드백 추가</h3>
+            <button class="modal-close" onclick="closeFeedbackModal()" id="btn-close-feedback-modal"><i data-lucide="x"></i></button>
+          </div>
+          <div class="modal-body">
+            <div class="field-group">
+              <label class="field-label">피드백 내용 <span style="color:#f093fb">*</span></label>
+              <textarea id="feedback-content" class="field-textarea"
+                placeholder="받은 피드백 내용을 자세히 기록해 주세요..." rows="3"></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label">피드백 출처</label>
+              <input type="text" id="feedback-from" class="field-input"
+                placeholder="예: 팀장님, 멘토님, 동료..." />
+            </div>
+            <div class="field-group">
+              <label class="field-label">태그</label>
+              <div class="preset-tags" id="feedback-preset-tags">
+                <button class="preset-tag" onclick="togglePresetTag(this,'feedback')" data-tag="기획">기획</button>
+                <button class="preset-tag" onclick="togglePresetTag(this,'feedback')" data-tag="UX">UX</button>
+                <button class="preset-tag" onclick="togglePresetTag(this,'feedback')" data-tag="커뮤니케이션">커뮤니케이션</button>
+                <button class="preset-tag" onclick="togglePresetTag(this,'feedback')" data-tag="프로세스">프로세스</button>
+                <button class="preset-tag" onclick="togglePresetTag(this,'feedback')" data-tag="문서화">문서화</button>
+                <button class="preset-tag" onclick="togglePresetTag(this,'feedback')" data-tag="🌟 칭찬">🌟 칭찬</button>
+              </div>
+              <div class="selected-tags" id="feedback-selected-tags"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="ghost-btn" onclick="closeFeedbackModal()">취소</button>
+            <button class="primary-btn" onclick="saveFeedback()" id="btn-save-feedback">저장</button>
+          </div>
+        </div>
+      </div>
+      <!-- END DASHBOARD VIEW -->
+
+    </main>
+  </div>
+
+  <!-- Image Lightbox -->
+  <div class="modal-overlay image-lightbox" id="image-lightbox" onclick="closeImageLightbox(event)">
+    <button class="lightbox-close" onclick="document.getElementById('image-lightbox').classList.remove('open')" aria-label="닫기">✕</button>
+    <img id="lightbox-img" src="" alt="이미지 확대 보기" />
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
